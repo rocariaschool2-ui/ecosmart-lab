@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EcoSmart Lab | مختبر البحث الذكي للطاقة</title>
+<style>
+:root{--navy:#10243a;--teal:#087f8c;--mint:#dff5ef;--bg:#f4f7f8;--ink:#203246;--muted:#657789;--line:#dce5e9;--white:#fff;--orange:#f2a541}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.55}
+header{background:linear-gradient(120deg,#10243a,#145d69);color:#fff;padding:25px max(18px,calc((100% - 1180px)/2));}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.brand{display:flex;gap:13px;align-items:center}.logo{width:48px;height:48px;border-radius:14px;background:#fff;color:var(--teal);display:grid;place-items:center;font-size:25px;font-weight:bold}
+h1{font-size:clamp(22px,3vw,32px);margin:0}.sub{color:#d3e8eb;margin:5px 0 0;font-size:14px}
+button,.btn{border:0;border-radius:10px;padding:10px 15px;background:var(--teal);color:#fff;font-weight:700;cursor:pointer;font-size:14px}
+button:hover,.btn:hover{filter:brightness(.94)}button.secondary{background:#eaf1f3;color:var(--ink)}button.danger{background:#a83b3b}.lang{background:#fff;color:var(--navy)}
+.wrap{max-width:1180px;margin:22px auto;padding:0 16px}.notice{background:#fff7e8;border:1px solid #f2d8a8;color:#76531c;padding:12px 15px;border-radius:12px;margin-bottom:18px;font-size:13px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tabs button{background:#e6edef;color:#345064}.tabs button.active{background:var(--navy);color:#fff}
+.panel{display:none}.panel.active{display:block}.card{background:var(--white);border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #18354a08}
+h2{font-size:20px;margin:0 0 14px;color:var(--navy)}h3{font-size:16px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:5px;color:#405569}input,select,textarea{width:100%;border:1px solid #cbd8de;border-radius:9px;padding:10px;background:#fff;color:var(--ink);font:inherit;font-size:14px}textarea{min-height:75px;resize:vertical}.field{min-width:0}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.muted{color:var(--muted);font-size:13px}.metricgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{background:#f7fafb;border:1px solid var(--line);border-radius:12px;padding:14px}.metric strong{display:block;font-size:26px;color:var(--teal)}.metric span{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:start}th{color:#536a7c;background:#f6f9fa}
+.barrow{display:grid;grid-template-columns:minmax(120px,1fr) 3fr 48px;gap:10px;align-items:center;margin:10px 0;font-size:13px}.bar{height:12px;background:#e6edef;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;background:var(--teal);border-radius:20px}
+.empty{padding:24px;text-align:center;color:var(--muted);background:#f8fafb;border-radius:10px}.small{font-size:12px;color:var(--muted)}footer{text-align:center;color:var(--muted);padding:20px;font-size:12px}
+[dir=ltr] body{text-align:left}[dir=ltr] .brand{direction:ltr}
+@media(max-width:720px){.grid,.grid.three{grid-template-columns:1fr}.metricgrid{grid-template-columns:repeat(2,1fr)}.barrow{grid-template-columns:100px 1fr 40px}}
+@media print{header,.tabs,.actions,.notice,.no-print{display:none!important}.panel{display:block!important}.card{break-inside:avoid;box-shadow:none}.wrap{max-width:none;margin:0;padding:0}body{background:#fff}}
+</style></head>
+<body>
+<header><div class="top"><div class="brand"><div class="logo">⚡</div><div><h1 id="brandTitle">EcoSmart Lab</h1><p class="sub" id="brandSub">مختبر البحث الذكي لترشيد الطاقة في الأقسام الدراسية</p></div></div><button class="lang" id="langBtn" onclick="toggleLang()">English</button></div></header>
+<main class="wrap">
+<div class="notice" id="storageNotice">⚠️ هذه نسخة محلية: تُحفظ البيانات في هذا المتصفح وعلى هذا الجهاز فقط. لا تُدخلوا أسماء التلاميذ أو أي معلومات شخصية. احتفظوا بنسخة احتياطية من ملف البيانات.</div>
+<nav class="tabs no-print">
+<button class="active" data-tab="dashboard" onclick="showTab('dashboard')" data-ar="لوحة النتائج" data-en="Dashboard">لوحة النتائج</button>
+<button data-tab="observation" onclick="showTab('observation')" data-ar="الملاحظة الصفية" data-en="Classroom observation">الملاحظة الصفية</button>
+<button data-tab="teacher" onclick="showTab('teacher')" data-ar="استبيان المعلمين" data-en="Teacher survey">استبيان المعلمين</button>
+<button data-tab="student" onclick="showTab('student')" data-ar="استبيان التلاميذ" data-en="Pupil survey">استبيان التلاميذ</button>
+<button data-tab="experiment" onclick="showTab('experiment')" data-ar="تجربة Arduino" data-en="Arduino experiment">تجربة Arduino</button>
+<button data-tab="data" onclick="showTab('data')" data-ar="البيانات المحفوظة" data-en="Saved data">البيانات المحفوظة</button>
+<button data-tab="analyst" onclick="showTab('analyst')" data-ar="المحلل الذكي AI" data-en="AI Research Analyst">المحلل الذكي AI</button>
+</nav>
+<section id="dashboard" class="panel active">
+<div class="card"><h2 data-ar="لوحة متابعة البحث" data-en="Research dashboard">لوحة متابعة البحث</h2><p class="muted" data-ar="تُحدّث المؤشرات تلقائياً اعتماداً على البيانات التي تُدخلونها. لا تعرض المنصة نتائج افتراضية." data-en="Metrics update from your entries. No sample or fabricated results are included.">تُحدّث المؤشرات تلقائياً اعتماداً على البيانات التي تُدخلونها. لا تعرض المنصة نتائج افتراضية.</p>
+<div class="metricgrid"><div class="metric"><strong id="mObs">0</strong><span data-ar="سجلات الملاحظة" data-en="Observation records">سجلات الملاحظة</span></div><div class="metric"><strong id="mTeach">0</strong><span data-ar="استبيانات المعلمين" data-en="Teacher surveys">استبيانات المعلمين</span></div><div class="metric"><strong id="mStud">0</strong><span data-ar="استبيانات التلاميذ" data-en="Pupil surveys">استبيانات التلاميذ</span></div><div class="metric"><strong id="mExp">0</strong><span data-ar="تجارب Arduino" data-en="Arduino trials">تجارب Arduino</span></div></div></div>
+<div class="grid"><div class="card"><h3 data-ar="مؤشرات الملاحظة الصفية" data-en="Observation indicators">مؤشرات الملاحظة الصفية</h3><div id="obsStats" class="empty">لا توجد بيانات بعد.</div></div><div class="card"><h3 data-ar="نتائج تجربة الطاقة" data-en="Energy experiment results">نتائج تجربة الطاقة</h3><div id="energyStats" class="empty">لا توجد بيانات بعد.</div></div></div>
+<div class="card"><h3 data-ar="استنتاجات أولية مبنية على البيانات" data-en="Data-based preliminary findings">استنتاجات أولية مبنية على البيانات</h3><div id="conclusions" class="empty">أدخلوا بيانات البحث لتوليد الاستنتاجات. لن تُنشأ استنتاجات عند غياب البيانات.</div></div>
+<div class="actions no-print"><button onclick="window.print()" data-ar="طباعة / حفظ التقرير PDF" data-en="Print / Save report as PDF">طباعة / حفظ التقرير PDF</button><button class="secondary" onclick="exportJSON()" data-ar="تصدير نسخة احتياطية" data-en="Export backup">تصدير نسخة احتياطية</button></div>
+</section>
+<section id="observation" class="panel"><div class="card"><h2 data-ar="تسجيل ملاحظة صفية" data-en="Record a classroom observation">تسجيل ملاحظة صفية</h2><p class="muted" data-ar="سجلوا ملاحظة واحدة لكل فترة زمنية محددة. استعملوا رمزاً للقسم بدلاً من اسم المعلم أو التلاميذ." data-en="Enter one record for each defined observation period. Use a classroom code, not personal names.">سجلوا ملاحظة واحدة لكل فترة زمنية محددة. استعملوا رمزاً للقسم بدلاً من اسم المعلم أو التلاميذ.</p>
+<form id="obsForm"><div class="grid three">
+<div class="field"><label data-ar="التاريخ" data-en="Date">التاريخ</label><input name="date" type="date" required></div>
+<div class="field"><label data-ar="رمز القسم" data-en="Classroom code">رمز القسم</label><input name="room" placeholder="مثال: C1 / e.g. C1" required></div>
+<div class="field"><label data-ar="الفترة" data-en="Time period">الفترة</label><select name="period"><option value="morning">صباحية / Morning</option><option value="afternoon">مسائية / Afternoon</option></select></div>
+<div class="field"><label data-ar="عدد التلاميذ الحاضرين" data-en="Pupils present">عدد التلاميذ الحاضرين</label><input name="pupils" type="number" min="0" required></div>
+<div class="field"><label data-ar="عدد المصابيح المضاءة" data-en="Lights switched on">عدد المصابيح المضاءة</label><input name="lights" type="number" min="0" required></div>
+<div class="field"><label data-ar="هل القسم مشغول؟" data-en="Is the classroom occupied?">هل القسم مشغول؟</label><select name="occupied"><option value="yes">نعم / Yes</option><option value="no">لا / No</option></select></div>
+<div class="field"><label data-ar="هل ضوء النهار كافٍ؟" data-en="Is daylight sufficient?">هل ضوء النهار كافٍ؟</label><select name="daylight"><option value="yes">نعم / Yes</option><option value="no">لا / No</option></select></div>
+<div class="field"><label data-ar="ملاحظات (اختياري)" data-en="Notes (optional)">ملاحظات (اختياري)</label><input name="notes"></div></div><div class="actions"><button type="submit" data-ar="حفظ الملاحظة" data-en="Save observation">حفظ الملاحظة</button></div></form></div></section>
+<section id="teacher" class="panel"><div class="card"><h2 data-ar="استبيان المعلمين (مجهول)" data-en="Teacher survey (anonymous)">استبيان المعلمين (مجهول)</h2><p class="muted" data-ar="لا تكتبوا أسماء أو بيانات اتصال. كل إرسال يمثل إجابة واحدة." data-en="Do not enter names or contact details. Each submission is one response.">لا تكتبوا أسماء أو بيانات اتصال. كل إرسال يمثل إجابة واحدة.</p>
+<form id="teacherForm"><div class="grid">
+<div class="field"><label data-ar="كم مرة تُترك المصابيح مضاءة دون حاجة؟" data-en="How often are lights left on unnecessarily?">كم مرة تُترك المصابيح مضاءة دون حاجة؟</label><select name="waste"><option value="often">غالباً / Often</option><option value="sometimes">أحياناً / Sometimes</option><option value="rarely">نادراً / Rarely</option><option value="never">أبداً / Never</option></select></div>
+<div class="field"><label data-ar="هل توجد آلية لمتابعة استهلاك الكهرباء؟" data-en="Is electricity use monitored?">هل توجد آلية لمتابعة استهلاك الكهرباء؟</label><select name="monitor"><option value="yes">نعم / Yes</option><option value="no">لا / No</option><option value="unsure">لا أعلم / Unsure</option></select></div>
+<div class="field"><label data-ar="ما الإجراء الأكثر فاعلية برأيك؟" data-en="Which action could help most?">ما الإجراء الأكثر فاعلية برأيك؟</label><select name="solution"><option value="awareness">التوعية / Awareness</option><option value="sensors">حساسات الحركة والضوء / Motion and light sensors</option><option value="routine">جدول إطفاء / Switch-off routine</option><option value="monitoring">متابعة الاستهلاك / Usage monitoring</option></select></div>
+<div class="field"><label data-ar="ملاحظة إضافية (اختياري)" data-en="Additional comment (optional)">ملاحظة إضافية (اختياري)</label><textarea name="comment"></textarea></div></div><div class="actions"><button type="submit" data-ar="حفظ الإجابة" data-en="Save response">حفظ الإجابة</button></div></form></div></section>
+<section id="student" class="panel"><div class="card"><h2 data-ar="استبيان التلاميذ (مجهول)" data-en="Pupil survey (anonymous)">استبيان التلاميذ (مجهول)</h2><p class="muted" data-ar="يُفضّل أن يشرح المشرف الأسئلة. لا تجمعوا أسماء التلاميذ أو أعمارهم الدقيقة." data-en="A supervisor should explain the questions. Do not collect pupil names or exact ages.">يُفضّل أن يشرح المشرف الأسئلة. لا تجمعوا أسماء التلاميذ أو أعمارهم الدقيقة.</p>
+<form id="studentForm"><div class="grid">
+<div class="field"><label data-ar="هل تتذكر إطفاء الضوء عند مغادرة القسم؟" data-en="Do you remember to switch off lights when leaving?">هل تتذكر إطفاء الضوء عند مغادرة القسم؟</label><select name="switch"><option value="always">دائماً / Always</option><option value="usually">غالباً / Usually</option><option value="sometimes">أحياناً / Sometimes</option><option value="never">نادراً أو أبداً / Rarely or never</option></select></div>
+<div class="field"><label data-ar="هل تعرف لماذا يجب ترشيد الكهرباء؟" data-en="Do you know why saving electricity matters?">هل تعرف لماذا يجب ترشيد الكهرباء؟</label><select name="know"><option value="yes">نعم / Yes</option><option value="somewhat">إلى حد ما / A little</option><option value="no">لا / No</option></select></div>
+<div class="field"><label data-ar="هل تلاحظ أضواء مضاءة في قسم فارغ؟" data-en="Do you notice lights on in an empty classroom?">هل تلاحظ أضواء مضاءة في قسم فارغ؟</label><select name="emptyLights"><option value="often">غالباً / Often</option><option value="sometimes">أحياناً / Sometimes</option><option value="never">أبداً / Never</option></select></div>
+<div class="field"><label data-ar="هل ترغب في استعمال نظام ذكي لترشيد الطاقة؟" data-en="Would you like to use a smart energy-saving system?">هل ترغب في استعمال نظام ذكي لترشيد الطاقة؟</label><select name="smart"><option value="yes">نعم / Yes</option><option value="no">لا / No</option><option value="unsure">غير متأكد / Unsure</option></select></div></div><div class="actions"><button type="submit" data-ar="حفظ الإجابة" data-en="Save response">حفظ الإجابة</button></div></form></div></section>
+<section id="experiment" class="panel"><div class="card"><h2 data-ar="تجربة قياس استهلاك الطاقة" data-en="Energy measurement experiment">تجربة قياس استهلاك الطاقة</h2><p class="muted" data-ar="أدخلوا الطاقة المقاسة من جهاز قياس مناسب إن توفرت. إذا أدخلتم القدرة والمدة فقط، تحسب المنصة الطاقة النظرية بالكيلوواط ساعة." data-en="Enter measured energy from a suitable meter when available. If only power and duration are entered, theoretical kWh is calculated.">أدخلوا الطاقة المقاسة من جهاز قياس مناسب إن توفرت. إذا أدخلتم القدرة والمدة فقط، تحسب المنصة الطاقة النظرية بالكيلوواط ساعة.</p>
+<form id="expForm"><div class="grid three">
+<div class="field"><label data-ar="رمز التجربة" data-en="Trial code">رمز التجربة</label><input name="trial" required placeholder="T1"></div>
+<div class="field"><label data-ar="مرحلة القياس" data-en="Measurement phase">مرحلة القياس</label><select name="phase"><option value="before">قبل النظام / Before</option><option value="after">بعد النظام / After</option></select></div>
+<div class="field"><label data-ar="تاريخ القياس" data-en="Measurement date">تاريخ القياس</label><input name="date" type="date" required></div>
+<div class="field"><label data-ar="قدرة المصباح (واط)" data-en="Lamp power (W)">قدرة المصباح (واط)</label><input name="watts" type="number" min="0" step="0.1" required></div>
+<div class="field"><label data-ar="مدة التشغيل (ساعات)" data-en="Operating time (hours)">مدة التشغيل (ساعات)</label><input name="hours" type="number" min="0" step="0.01" required></div>
+<div class="field"><label data-ar="الطاقة المقاسة (kWh) - اختياري" data-en="Measured energy (kWh) - optional">الطاقة المقاسة (kWh) - اختياري</label><input name="measured" type="number" min="0" step="0.001"></div>
+<div class="field"><label data-ar="عدد مرات كشف الحركة" data-en="Motion detections">عدد مرات كشف الحركة</label><input name="motion" type="number" min="0" value="0"></div>
+<div class="field"><label data-ar="نسبة الوقت الذي كان فيه الضوء كافياً (%)" data-en="Time with sufficient daylight (%)">نسبة الوقت الذي كان فيه الضوء كافياً (%)</label><input name="daylight" type="number" min="0" max="100" value="0"></div>
+<div class="field"><label data-ar="ملاحظات" data-en="Notes">ملاحظات</label><input name="notes"></div></div><div class="actions"><button type="submit" data-ar="حفظ التجربة" data-en="Save trial">حفظ التجربة</button></div></form><p class="small" data-ar="الحساب النظري: الطاقة (kWh) = القدرة (W) × المدة (h) ÷ 1000. لا تجمع الطاقة المقاسة مع الطاقة النظرية لنفس التجربة." data-en="Formula: Energy (kWh) = Power (W) × time (h) ÷ 1000. Do not add measured and theoretical energy for the same trial.">الحساب النظري: الطاقة (kWh) = القدرة (W) × المدة (h) ÷ 1000. لا تجمع الطاقة المقاسة مع الطاقة النظرية لنفس التجربة.</p></div></section>
+
+<section id="analyst" class="panel">
+<div class="card">
+<h2 data-ar="المحلّل الذكي للبحث" data-en="AI Research Analyst">المحلّل الذكي للبحث</h2>
+<p class="muted" data-ar="يحلّل هذا المساعد جميع السجلات المحفوظة، ويحوّلها إلى نتائج وتفسيرات وتوصيات. التحليل مبني على البيانات المدخلة وليس على نتائج مفترضة." data-en="This assistant analyzes all saved records and turns them into findings, interpretations and recommendations. It uses entered data, never assumed results.">يحلّل هذا المساعد جميع السجلات المحفوظة، ويحوّلها إلى نتائج وتفسيرات وتوصيات. التحليل مبني على البيانات المدخلة وليس على نتائج مفترضة.</p>
+<div class="actions no-print"><button onclick="runAIAnalysis()" data-ar="ابدأ التحليل الذكي" data-en="Run intelligent analysis">ابدأ التحليل الذكي</button><button class="secondary" onclick="window.print()" data-ar="طباعة التقرير" data-en="Print report">طباعة التقرير</button></div>
+<div id="aiReport"><div class="empty" data-ar="اضغطوا «ابدأ التحليل الذكي» بعد إدخال البيانات." data-en="Select “Run intelligent analysis” after entering your data.">اضغطوا «ابدأ التحليل الذكي» بعد إدخال البيانات.</div></div>
+</div></section>
+
+<section id="data" class="panel"><div class="card"><h2 data-ar="البيانات المحفوظة" data-en="Saved records">البيانات المحفوظة</h2><p class="muted" data-ar="راجعوا السجلات واحذفوا الإدخالات الخاطئة. التصدير يحفظ نسخة قابلة للنقل." data-en="Review records and remove incorrect entries. Export creates a portable backup.">راجعوا السجلات واحذفوا الإدخالات الخاطئة. التصدير يحفظ نسخة قابلة للنقل.</p><div class="actions no-print"><button onclick="exportJSON()" data-ar="تصدير JSON" data-en="Export JSON">تصدير JSON</button><button class="secondary" onclick="exportCSV()" data-ar="تصدير CSV" data-en="Export CSV">تصدير CSV</button><label class="btn secondary" style="display:inline-block"> <span data-ar="استيراد نسخة JSON" data-en="Import JSON backup">استيراد نسخة JSON</span><input type="file" accept="application/json" style="display:none" onchange="importJSON(event)"></label><button class="danger" onclick="clearAll()" data-ar="حذف كل البيانات" data-en="Delete all data">حذف كل البيانات</button></div><div id="records"></div></div></section>
+</main><footer>EcoSmart Lab · Educational research prototype · Local browser storage</footer>
+<script>
+const KEY='ecosmart-lab-v1';let lang='ar';
+let db=JSON.parse(localStorage.getItem(KEY)||'{"observations":[],"teachers":[],"students":[],"experiments":[]}');
+const $=s=>document.querySelector(s), t=(ar,en)=>lang==='ar'?ar:en;
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function toggleLang(){lang=lang==='ar'?'en':'ar';document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('#langBtn').textContent=lang==='ar'?'English':'العربية';$('#brandSub').textContent=t('مختبر البحث الذكي لترشيد الطاقة في الأقسام الدراسية','Smart research lab for classroom energy saving');document.querySelectorAll('[data-ar]').forEach(e=>{e.textContent=e.dataset[lang]});render()}
+function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
+function bind(formId,key){$('#'+formId).addEventListener('submit',e=>{e.preventDefault();const o=Object.fromEntries(new FormData(e.target).entries());o.id=crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random());o.createdAt=new Date().toISOString();if(key==='experiments'){o.watts=+o.watts;o.hours=+o.hours;o.motion=+o.motion;o.daylight=+o.daylight;o.measured=o.measured===''?null:+o.measured;o.calculated=+(o.watts*o.hours/1000).toFixed(4);o.energy=o.measured??o.calculated}else if(key==='observations'){['pupils','lights'].forEach(k=>o[k]=+o[k]);if(o.lights<0||o.pupils<0){alert(t('القيم لا يمكن أن تكون سالبة.','Values cannot be negative.'));return}}db[key].push(o);save();e.target.reset();alert(t('تم حفظ البيانات على هذا الجهاز.','Saved on this device.'))})}
+bind('obsForm','observations');bind('teacherForm','teachers');bind('studentForm','students');bind('expForm','experiments');
+function pct(a,b){return b?Math.round(a/b*100):0}
+function render(){const O=db.observations,T=db.teachers,S=db.students,E=db.experiments;$('#mObs').textContent=O.length;$('#mTeach').textContent=T.length;$('#mStud').textContent=S.length;$('#mExp').textContent=E.length;
+let empty=O.filter(x=>x.occupied==='no'&&x.lights>0).length,day=O.filter(x=>x.daylight==='yes'&&x.lights>0).length;
+$('#obsStats').className=O.length?'':'empty';$('#obsStats').innerHTML=O.length?`${bar(t('إضاءة أثناء خلو القسم','Lights on in empty rooms'),empty,O.length)}${bar(t('إضاءة مع ضوء نهار كافٍ','Lights on despite sufficient daylight'),day,O.length)}<p class="small">${t('المقام: عدد سجلات الملاحظة','Denominator: observation records')} = ${O.length}</p>`:t('لا توجد بيانات بعد.','No data yet.');
+let before=E.filter(x=>x.phase==='before'),after=E.filter(x=>x.phase==='after');let avg=a=>a.length?a.reduce((s,x)=>s+x.energy,0)/a.length:null;let b=avg(before),a=avg(after);
+$('#energyStats').className=E.length?'':'empty';$('#energyStats').innerHTML=E.length?`<p>${t('متوسط الطاقة قبل','Average before')}: <b>${b===null?'—':b.toFixed(3)+' kWh'}</b></p><p>${t('متوسط الطاقة بعد','Average after')}: <b>${a===null?'—':a.toFixed(3)+' kWh'}</b></p><p>${t('عدد القياسات','Measurements')}: ${E.length}</p>`:t('لا توجد بيانات بعد.','No data yet.');
+let findings=[];if(O.length){findings.push(t(`في ${O.length} سجل ملاحظة، سُجلت المصابيح مضاءة في قسم غير مشغول في ${empty} حالة (${pct(empty,O.length)}%).`,`Across ${O.length} observation records, lights were on in an unoccupied room in ${empty} cases (${pct(empty,O.length)}%).`));findings.push(t(`سُجلت إضاءة مع توفر ضوء نهار كافٍ في ${day} حالة (${pct(day,O.length)}%).`,`Lights were on despite sufficient daylight in ${day} records (${pct(day,O.length)}%).`))}
+if(b!==null&&a!==null){let change=b===0?null:((b-a)/b*100);findings.push(change===null?t('متوسط الطاقة قبل النظام يساوي صفراً؛ لا يمكن حساب نسبة التغير.','Baseline average is zero; percentage change cannot be calculated.'):t(`مقارنة متوسطات السجلات المدخلة، التغير في الطاقة بعد النظام هو ${change.toFixed(1)}%. هذه مقارنة وصفية وليست إثباتاً سببياً.`,`Comparing entered trial averages, the energy change after the system is ${change.toFixed(1)}%. This is descriptive, not proof of causation.`))}
+if(T.length)findings.push(t(`استُلمت ${T.length} إجابة من المعلمين. راجعوا توزيع الإجابات في ملف CSV لتفسيرها.`,`Collected ${T.length} teacher responses. Review response distributions in the CSV for interpretation.`));
+if(S.length)findings.push(t(`استُلمت ${S.length} إجابة من التلاميذ. لا تعمموا النتائج خارج العينة المشاركة.`,`Collected ${S.length} pupil responses. Do not generalize beyond the participating sample.`));
+$('#conclusions').className=findings.length?'':'empty';$('#conclusions').innerHTML=findings.length?'<ul>'+findings.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><p class="small">'+t('الاستنتاجات وصفية وتعتمد على اكتمال ودقة البيانات المدخلة. تأكدوا من مقارنة فترات متشابهة وعدد المصابيح والقدرة ومدة القياس.','Findings are descriptive and depend on data quality. Compare equivalent periods, lamp counts, power ratings and measurement duration.')+'</p>':t('أدخلوا بيانات البحث لتوليد الاستنتاجات. لن تُنشأ استنتاجات عند غياب البيانات.','Enter research data to generate findings. No conclusions are generated without data.');
+renderRecords()}
+function bar(label,n,total){return `<div class="barrow"><span>${label}</span><div class="bar"><i style="width:${pct(n,total)}%"></i></div><b>${pct(n,total)}%</b></div>`}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderRecords(){let all=Object.entries(db).flatMap(([k,arr])=>arr.map(x=>({...x,_kind:k}))).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));if(!all.length){$('#records').innerHTML=`<div class="empty">${t('لا توجد سجلات محفوظة بعد.','No saved records yet.')}</div>`;return}$('#records').innerHTML=`<div style="overflow:auto"><table><thead><tr><th>${t('النوع','Type')}</th><th>${t('التاريخ','Date')}</th><th>${t('ملخص','Summary')}</th><th class="no-print">${t('إجراء','Action')}</th></tr></thead><tbody>${all.map(x=>{let kind={observations:t('ملاحظة','Observation'),teachers:t('معلم','Teacher'),students:t('تلميذ','Pupil'),experiments:t('تجربة','Experiment')}[x._kind];let summary=x._kind==='observations'?`${x.room} · ${x.pupils} ${t('تلاميذ','pupils')} · ${x.lights} ${t('مصابيح','lights')}`:x._kind==='experiments'?`${x.trial} · ${x.phase} · ${x.energy} kWh`:`${t('إجابة مجهولة','Anonymous response')}`;return `<tr><td>${kind}</td><td>${esc(x.date||new Date(x.createdAt).toLocaleDateString())}</td><td>${esc(summary)}</td><td class="no-print"><button class="danger" style="padding:6px 9px" onclick="removeRecord('${x._kind}','${x.id}')">${t('حذف','Delete')}</button></td></tr>`}).join('')}</tbody></table></div>`}
+function removeRecord(k,id){if(confirm(t('حذف هذا السجل؟','Delete this record?'))){db[k]=db[k].filter(x=>x.id!==id);save()}}
+function download(name,content,type){let blob=new Blob([content],{type}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
+function exportJSON(){download('ecosmart-lab-backup.json',JSON.stringify(db,null,2),'application/json')}
+function exportCSV(){let rows=[];for(let [kind,arr] of Object.entries(db))for(let x of arr)rows.push({kind,...x});let keys=[...new Set(rows.flatMap(x=>Object.keys(x)))];let csv=[keys.join(','),...rows.map(r=>keys.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))].join('\n');download('ecosmart-lab-data.csv','\ufeff'+csv,'text/csv;charset=utf-8')}
+function importJSON(ev){let f=ev.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);for(let k of ['observations','teachers','students','experiments'])if(!Array.isArray(d[k]))throw Error();if(!confirm(t('سيتم دمج البيانات المستوردة مع البيانات الحالية. متابعة؟','Imported records will be merged with current data. Continue?')))return;for(let k of Object.keys(db))db[k].push(...d[k]);save();alert(t('تم الاستيراد.','Import complete.'))}catch(e){alert(t('ملف غير صالح.','Invalid backup file.'))}};r.readAsText(f);ev.target.value=''}
+function clearAll(){if(confirm(t('هذا يحذف جميع البيانات نهائياً من هذا المتصفح. هل أنشأت نسخة احتياطية؟','This permanently deletes all data in this browser. Have you made a backup?'))&&confirm(t('تأكيد الحذف النهائي؟','Confirm permanent deletion?'))){db={observations:[],teachers:[],students:[],experiments:[]};save()}}
+
+function runAIAnalysis(){
+ const O=db.observations,T=db.teachers,S=db.students,E=db.experiments;
+ const today=new Date().toLocaleDateString(lang==='ar'?'ar-TN':'en-GB');
+ const parts=[];
+ const title=(ar,en)=>`<h3>${t(ar,en)}</h3>`;
+ const para=(ar,en)=>`<p>${t(ar,en)}</p>`;
+ const pctText=(n,d)=>`${pct(n,d)}% (${n}/${d})`;
+ const distribution=(arr,key,labels)=>{
+   const counts={};arr.forEach(x=>counts[x[key]]=(counts[x[key]]||0)+1);
+   return Object.entries(labels).filter(([k])=>counts[k]).map(([k,v])=>`<li>${t(v[0],v[1])}: <b>${pctText(counts[k],arr.length)}</b></li>`).join('');
+ };
+ if(!O.length&&!T.length&&!S.length&&!E.length){
+   $('#aiReport').innerHTML=`<div class="empty">${t('لا توجد بيانات كافية للتحليل. أدخلوا سجلات البحث أولاً.','There is not enough data to analyze. Enter research records first.')}</div>`;return;
+ }
+ parts.push(`<div class="card"><div class="small">${t('تاريخ إنشاء التحليل: ','Analysis generated: ')}${today}</div><h2>${t('الملخص التنفيذي','Executive summary')}</h2><p>${t('يعتمد هذا التقرير على','This report is based on')} <b>${O.length}</b> ${t('سجلات ملاحظة، و','observation records, ')}<b>${T.length}</b> ${t('استبيانات معلمين، و','teacher surveys, ')}<b>${S.length}</b> ${t('استبيانات تلاميذ، و','pupil surveys, and ')}<b>${E.length}</b> ${t('تجارب طاقة.','energy trials.')}</p></div>`);
+ if(O.length){
+  const empty=O.filter(x=>x.occupied==='no'&&x.lights>0).length;
+  const daylight=O.filter(x=>x.daylight==='yes'&&x.lights>0).length;
+  const occupied=O.filter(x=>x.occupied==='yes').length;
+  const avgLights=O.reduce((s,x)=>s+x.lights,0)/O.length;
+  parts.push(`<div class="card">${title('أولاً: تحليل الملاحظات الصفية','1. Classroom observation analysis')}
+  <p>${t('تم تحليل','Analyzed')} <b>${O.length}</b> ${t('سجلاً. متوسط عدد المصابيح المضاءة في السجل الواحد هو','records. The average number of lights switched on per record is')} <b>${avgLights.toFixed(2)}</b>.</p>
+  <ul><li>${t('تشغيل المصابيح في قسم غير مشغول:','Lights on while the room was unoccupied:')} <b>${pctText(empty,O.length)}</b>.</li>
+  <li>${t('تشغيل المصابيح رغم كفاية ضوء النهار:','Lights on despite sufficient daylight:')} <b>${pctText(daylight,O.length)}</b>.</li>
+  <li>${t('سجلات الأقسام المشغولة:','Records with occupied rooms:')} <b>${pctText(occupied,O.length)}</b>.</li></ul>
+  <p>${empty/O.length>=.25?t('تشير البيانات إلى فرصة لمراجعة إجراءات إطفاء الإنارة عند خلو الأقسام.','The data indicate an opportunity to review switch-off routines when classrooms are empty.'):t('لا تظهر سجلات الملاحظة وحدها نسبة مرتفعة من تشغيل الإنارة في الأقسام الخالية؛ ويجب مواصلة القياس في أوقات وأقسام مختلفة.','The records alone do not show a high rate of lights left on in empty rooms; continue measuring across different periods and classrooms.')}</p>
+  ${bar(t('قسم خالٍ مع إنارة','Empty room, lights on'),empty,O.length)}${bar(t('ضوء نهار كافٍ مع إنارة','Sufficient daylight, lights on'),daylight,O.length)}
+  <p class="small">${t('هذه نسب سجلات وليست نسب استهلاك الطاقة. لا يمكن تحويلها إلى kWh دون قياس القدرة ومدة التشغيل.','These are record percentages, not energy-consumption percentages. They cannot be converted to kWh without power and operating-time measurements.')}</p></div>`);
+ }
+ if(T.length){
+  parts.push(`<div class="card">${title('ثانياً: تحليل استبيان المعلمين','2. Teacher survey analysis')}
+  <p>${t('حجم عينة المعلمين:','Teacher sample size:')} <b>${T.length}</b>.</p>
+  <p>${t('تكرار ترك المصابيح مضاءة دون حاجة:','Frequency of lights left on unnecessarily:')}</p><ul>${distribution(T,'waste',{often:['غالباً','Often'],sometimes:['أحياناً','Sometimes'],rarely:['نادراً','Rarely'],never:['أبداً','Never']})}</ul>
+  <p>${t('وجود متابعة لاستهلاك الكهرباء:','Electricity-use monitoring:')}</p><ul>${distribution(T,'monitor',{yes:['نعم','Yes'],no:['لا','No'],unsure:['لا أعلم','Unsure']})}</ul>
+  <p>${t('الحل الذي يفضله المعلمون:','Solutions preferred by teachers:')}</p><ul>${distribution(T,'solution',{awareness:['التوعية','Awareness'],sensors:['الحساسات','Sensors'],routine:['جدول الإطفاء','Switch-off routine'],monitoring:['متابعة الاستهلاك','Usage monitoring']})}</ul>
+  <p>${t('تمثل النتائج آراء العينة المشاركة فقط، ولا تمثل بالضرورة جميع المعلمين.','These results represent only the participating sample, not necessarily all teachers.')}</p></div>`);
+ }
+ if(S.length){
+  parts.push(`<div class="card">${title('ثالثاً: تحليل استبيان التلاميذ','3. Pupil survey analysis')}
+  <p>${t('حجم عينة التلاميذ:','Pupil sample size:')} <b>${S.length}</b>.</p>
+  <p>${t('الالتزام بإطفاء الضوء عند المغادرة:','Remembering to switch off lights when leaving:')}</p><ul>${distribution(S,'switch',{always:['دائماً','Always'],usually:['غالباً','Usually'],sometimes:['أحياناً','Sometimes'],never:['نادراً أو أبداً','Rarely or never']})}</ul>
+  <p>${t('معرفة أهمية ترشيد الكهرباء:','Understanding why saving electricity matters:')}</p><ul>${distribution(S,'know',{yes:['نعم','Yes'],somewhat:['إلى حد ما','Somewhat'],no:['لا','No']})}</ul>
+  <p>${t('ملاحظة أضواء في قسم فارغ:','Noticing lights on in an empty room:')}</p><ul>${distribution(S,'emptyLights',{often:['غالباً','Often'],sometimes:['أحياناً','Sometimes'],never:['أبداً','Never']})}</ul>
+  <p>${t('الرغبة في استعمال نظام ذكي:','Interest in a smart system:')}</p><ul>${distribution(S,'smart',{yes:['نعم','Yes'],no:['لا','No'],unsure:['غير متأكد','Unsure']})}</ul>
+  <p>${t('يقيس الاستبيان الوعي والسلوك المصرّح بهما، لكنه لا يثبت السلوك الفعلي داخل الأقسام.','The survey measures reported awareness and behavior, but does not prove actual classroom behavior.')}</p></div>`);
+ }
+ if(E.length){
+  const before=E.filter(x=>x.phase==='before'),after=E.filter(x=>x.phase==='after');
+  const mean=a=>a.length?a.reduce((s,x)=>s+x.energy,0)/a.length:null;
+  const b=mean(before),a=mean(after);
+  const change=(b!==null&&a!==null&&b>0)?((b-a)/b*100):null;
+  parts.push(`<div class="card">${title('رابعاً: تحليل تجارب Arduino','4. Arduino experiment analysis')}
+  <p>${t('عدد التجارب:','Number of trials:')} <b>${E.length}</b> (${t('قبل النظام','before')}: ${before.length} · ${t('بعد النظام','after')}: ${after.length}).</p>
+  <p>${t('متوسط الطاقة قبل النظام:','Mean energy before:')} <b>${b===null?'—':b.toFixed(4)+' kWh'}</b></p>
+  <p>${t('متوسط الطاقة بعد النظام:','Mean energy after:')} <b>${a===null?'—':a.toFixed(4)+' kWh'}</b></p>
+  ${change===null?para('لا تتوفر حالياً مجموعتان قابلتان للمقارنة أو أن متوسط خط الأساس يساوي صفراً. أضيفوا قياسات قبل وبعد النظام بنفس ظروف القياس.','There are not yet two comparable groups, or the baseline average is zero. Add before-and-after measurements under equivalent conditions.'):para(`نسبة التغير في متوسط الطاقة: ${change.toFixed(2)}%. ${change>=0?'انخفاض':'ارتفاع'} مقارنة بمتوسط ما قبل النظام.`,`Change in mean energy: ${change.toFixed(2)}%. ${change>=0?'Decrease':'Increase'} compared with the pre-system mean.`)}
+  <p class="small">${t('لصحة المقارنة، تأكدوا من تساوي مدة القياس وعدد المصابيح والقدرة وظروف الإضاءة والإشغال. نسبة التغير وحدها ليست دليلاً سببياً.','For a valid comparison, keep duration, lamp count, power, lighting and occupancy equivalent. Percentage change alone is not causal proof.')}</p></div>`);
+ }
+ const recommendations=[];
+ if(O.some(x=>x.occupied==='no'&&x.lights>0))recommendations.push(t('اعتماد قائمة تحقق لإطفاء الإنارة عند مغادرة القسم، ثم إعادة الملاحظة لقياس التحسن.','Introduce a switch-off checklist when leaving classrooms, then repeat observations to measure improvement.'));
+ if(O.some(x=>x.daylight==='yes'&&x.lights>0))recommendations.push(t('دراسة إمكانية الاستفادة من ضوء النهار قبل تشغيل جميع المصابيح.','Assess whether daylight can be used before switching on all lamps.'));
+ if(T.some(x=>x.solution==='sensors'))recommendations.push(t('إشراك المعلمين في اختبار الحساسات وتحديد شروط تشغيلها وإطفائها.','Involve teachers in testing sensors and defining activation conditions.'));
+ if(S.some(x=>x.know!=='yes'))recommendations.push(t('تنظيم نشاط توعوي حول الطاقة ثم إعادة الاستبيان لقياس تغير المعرفة.','Run an energy-awareness activity, then repeat the survey to assess knowledge change.'));
+ if(E.length&&(!E.some(x=>x.phase==='before')||!E.some(x=>x.phase==='after')))recommendations.push(t('استكمال قياسات قبل وبعد النظام باستخدام نفس المصابيح والمدة والظروف.','Complete before-and-after measurements using the same lamps, duration and conditions.'));
+ if(!recommendations.length)recommendations.push(t('زيادة عدد القياسات وتغطية أوقات وأقسام مختلفة قبل اعتماد توصيات نهائية.','Increase measurements across different times and classrooms before final recommendations.'));
+ parts.push(`<div class="card">${title('خامساً: التوصيات العملية','5. Practical recommendations')}<ol>${recommendations.map(x=>`<li>${x}</li>`).join('')}</ol></div>`);
+ parts.push(`<div class="card">${title('سادساً: جودة البيانات وحدود الدراسة','6. Data quality and study limitations')}
+ <ul><li>${t('تعتمد النتائج على دقة الإدخال واكتمال السجلات.','Findings depend on accurate and complete records.')}</li>
+ <li>${t('العينات الصغيرة أو غير العشوائية لا تسمح بالتعميم الواسع.','Small or non-random samples do not support broad generalization.')}</li>
+ <li>${t('الاستبيانات تقيس الإجابات المصرح بها، لا السلوك الفعلي مباشرة.','Surveys measure reported answers, not directly observed behavior.')}</li>
+ <li>${t('إثبات التوفير يتطلب قياسات طاقة متكررة ومتكافئة قبل وبعد التطبيق.','Demonstrating savings requires repeated, comparable energy measurements before and after implementation.')}</li></ul>
+ <p><b>${t('الخلاصة العلمية:','Scientific conclusion:')}</b> ${t('تقدم البيانات الحالية مؤشرات أولية لفهم أنماط استعمال الإنارة وتقييم النموذج الذكي. ينبغي دعم الاستنتاج النهائي بقياسات إضافية ومقارنة عادلة قبل الجزم بمدى التوفير.','The current data provide preliminary indicators for understanding lighting-use patterns and evaluating the smart prototype. Additional measurements and fair comparisons are needed before asserting energy savings.')}</p></div>`);
+ $('#aiReport').innerHTML=parts.join('');
+}
+
+render();
+</script></body></html>
